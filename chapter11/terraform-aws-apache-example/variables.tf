@@ -1,7 +1,6 @@
 variable "vpc_id" {
     type = string
-    #default="vpc-0515341caa2b88c6c"   
-  
+    
 }
 
 variable "my_ip_with_cidr" {
