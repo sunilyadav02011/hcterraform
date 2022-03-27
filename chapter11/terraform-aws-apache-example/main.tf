@@ -2,6 +2,10 @@ data "aws_vpc" "main" {
     id = var.vpc_id
 }
 
+data "aws_subnet_ids" "subnet_ids" {
+  vpc_id = data.aws_vpc.main.id
+}
+
 resource "aws_security_group" "sg_my_securitygroup01" {
   name        = "sg_mywebserver01"
   description = "My security group"
@@ -72,8 +76,9 @@ data "aws_ami" "amazon-linux-2" {
 resource "aws_instance" "web" {
     ami="${data.aws_ami.amazon-linux-2.id}"
     instance_type=var.instance_type
-    vpc_security_group_ids=["${aws_security_group.sg_my_securitygroup01.id}"]
+    vpc_security_group_ids=[aws_security_group.sg_my_securitygroup01.id]
     user_data=data.template_file.user_data.rendered
+    subnet_id = tolist(data.aws_subnet_ids.subnet_ids.ids)[0]
     key_name = "${aws_key_pair.deployer.key_name}"
 
     tags={
